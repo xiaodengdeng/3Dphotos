@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"> 
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<script src="js/jquery-1.11.0.min.js"></script>
+		<title></title>
+	</head>
+	<style>
+		*{
+			margin:0;padding:0;}
+		body{background: #66677C;}
+		.pic{
+			width:120px;
+			height:180px;
+			margin: 150px auto;
+			position: relative;
+			/*3D旋转*/
+			transform-style: preserve-3d;
+			transform: perspective(800px) rotateX(-10deg) rotateY(0deg);
+		}
+		.pic img{
+			position: absolute;
+			width:100%;
+			height:100%;
+			border-radius: 5px;
+			box-shadow: 0 0 10px #fff;
+			/*倒影设置*/
+			-webkit-box-reflect: below 10px -webkit-linear-gradient(top,rgba(0,0,0,0) 50%,rgba(0,0,0,0.5) 100%);
+		}
+		.pic p{
+			width:1200px;
+			height:1200px;
+			background: -webkit-linear-gradient(center center,600px 600px,rgba(255,255,255,0.5),rgba(0,0,0,0));
+			position: absolute;
+			top: 100%;
+			left: 50%;
+			margin-top: -600px;
+			margin-left: -600px;
+			border-radius: 600px;
+			transform: rotateX(90deg);
+		}
+	</style>
+	
+	<body>
+		<div class="pic">
+			<img src="images/1.jpg" alt="1" />
+			<img src="images/2.jpg" alt="2" />
+			<img src="images/3.jpg" alt="3" />
+			<img src="images/4.jpg" alt="4" />
+			<img src="images/5.jpg" alt="5" />
+			<img src="images/6.jpg" alt="6" />
+			<img src="images/7.jpg" alt="7" />
+			<img src="images/8.jpg" alt="8" />
+			<img src="images/9.jpg" alt="9" />
+			<img src="images/10.jpg" alt="10"/>
+			<p></p>
+		</div>
+		
+	<script>
+	$(function(){
+		var imgL=$(".pic img").size();
+		var deg=360/imgL;
+		var roX=-10;
+		var roY=0;
+		var disX=0;/*两点间的距离*/
+		var disY=0;/*两点间的距离*/
+		var play=null;
+		/*遍历图片*/
+		$(".pic img").each(function(i){
+			$(this).css({
+				/*translateZ 定义2d旋转沿着z轴*/
+				"transform":"rotateY("+i*deg+"deg) translateZ(300px)"
+			})
+			$(this).attr("ondragstart","return false");/*防止图片被拖拽*/
+			
+		});
+		$(document).mousedown(function(ev){
+			/*获取之前坐标点*/
+			var x=ev.clientX;
+			var y=ev.clientY;
+			clearInterval(play);
+			console.log("我按下了")
+			$(this).bind("mousemove",function(ev){
+				/*获取当前坐标*/
+				var curX=ev.clientX;
+				var curY=ev.clientY;
+				/*两点距离差*/
+				disX=curX-x;				
+				disY=curY-y;
+				roY+=disX*0.2;
+				roX-=disY*0.1;
+				console.log(roY)
+				$('.pic').css({
+					transform:"perspective(800px) rotateX("+roX+"deg) rotateY("+roY+"deg)"
+				});
+				/*获取之前坐标点*/
+				x=ev.clientX;
+				y=ev.clientY;
+				
+			})
+		}).mouseup(function(){
+			$(this).unbind("mousemove");
+			play=setInterval(function(){
+				disX*=0.95;
+				disY*=0.95;
+				if(Math.abs(disX)<1 && Math.abs(disY)<1){
+					clearInterval(play)
+				}else{
+					roY+=disX*0.2;
+					roX-=disY*0.1;
+					$('.pic').css({transform:"perspective(800px) rotateX("+roX+"deg) rotateY("+roY+"deg)"})
+				
+				}
+			},30)
+		})		
+	});
+		
+	</script>
+	</body>	
+</html>
